@@ -49,17 +49,6 @@ class Timer extends React.Component {
 
 }
 
-function Status () {
-    return (
-        <>
-        <div className="title">Minesweeper</div>
-        <div className="status">
-            <Timer />
-        </div>
-        </>
-    )
-}
-
 class Cell extends React.Component {
     constructor(props) {
         super(props);
@@ -73,7 +62,9 @@ class Cell extends React.Component {
     handleClick(event) {
         this.setState({
             isHidden: false
-        }); 
+        });
+
+        this.props.stepCounter();
     }
 
     render() {
@@ -107,34 +98,53 @@ class Board extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            stepCount: 0
+            stepCount: 0,
+            started: false
         };
+
+        this.handleStep = this.handleStep.bind(this);
     }
-    
+
+    handleStep() {
+        this.setState({
+            stepCount: this.state.stepCount + 1,
+            started: true
+        });
+    }
+
     render() {
 
         var cols = [];
         var rows = [];
         var random_bool;
         var counter = 0;
-        var key = 10;
+        var key = 0;
 
         for(var j=0; j<this.props.rows; j++) {
             for(var i=0; i<this.props.cols; i++) {
                 if(counter<this.props.bombNo) {
-                    random_bool = Math.random() >= 0.5;
+                    random_bool = Math.random() >= 0.8;
                     if(random_bool) counter++;
                 } else random_bool = false;
-                cols.push(<Cell key={(key++).toString()} isBomb={random_bool} />);
+                cols.push(<Cell key={(key++).toString()} isBomb={random_bool} stepCounter={this.handleStep}/>);
             }
         rows.push(<div key={(key++).toString()} className="row">{cols}</div>);
         cols = [];
         }
 
         return (
-            <div className="board-container">
-                {rows}
-            </div>
+            <>
+                <div className="title">Minesweeper</div>
+                <div className="status">
+                    <Timer />
+                    <div className="step-count">
+                        {this.state.stepCount}
+                    </div>
+                </div>
+                <div className="board-container">
+                    {rows}
+                </div>
+            </>
         );
     }
 }
@@ -143,7 +153,6 @@ class Game extends React.Component {
     render() {
         return (
             <div className="main-container flex-center">
-                <Status />
                 <Board rows="10" cols="8" bombNo="10" />
             </div>
         )
