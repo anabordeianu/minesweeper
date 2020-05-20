@@ -97,14 +97,15 @@ class Cell extends React.Component {
 class Board extends React.Component {
     constructor(props) {
         super(props);
+
+        this.handleStep = this.handleStep.bind(this);
+        this.boardDisplay = this.boardDisplay.bind(this);
+        
         this.state = {
             stepCount: 0,
             started: false,
             board: this.boardDisplay()
         };
-
-        this.handleStep = this.handleStep.bind(this);
-        this.boardDisplay = this.boardDisplay.bind(this);
     }
 
     handleStep() {
