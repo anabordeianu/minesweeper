@@ -99,10 +99,12 @@ class Board extends React.Component {
         super(props);
         this.state = {
             stepCount: 0,
-            started: false
+            started: false,
+            board: this.boardDisplay()
         };
 
         this.handleStep = this.handleStep.bind(this);
+        this.boardDisplay = this.boardDisplay.bind(this);
     }
 
     handleStep() {
@@ -112,14 +114,13 @@ class Board extends React.Component {
         });
     }
 
-    render() {
-
+    boardDisplay() {
         var cols = [];
         var rows = [];
         var random_bool;
         var counter = 0;
         var key = 0;
-
+    
         for(var j=0; j<this.props.rows; j++) {
             for(var i=0; i<this.props.cols; i++) {
                 if(counter<this.props.bombNo) {
@@ -131,7 +132,11 @@ class Board extends React.Component {
         rows.push(<div key={(key++).toString()} className="row">{cols}</div>);
         cols = [];
         }
+    
+        return rows;
+    }
 
+    render() {
         return (
             <>
                 <div className="title">Minesweeper</div>
@@ -142,7 +147,7 @@ class Board extends React.Component {
                     </div>
                 </div>
                 <div className="board-container">
-                    {rows}
+                    {this.state.board}
                 </div>
             </>
         );
