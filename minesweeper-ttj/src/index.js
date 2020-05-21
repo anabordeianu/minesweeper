@@ -7,7 +7,7 @@ import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Minesweeper />
+    <User />
   </React.StrictMode>,
   document.getElementById('root')
 );
