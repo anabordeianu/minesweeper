@@ -2,12 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import User from './User'
-import Minesweeper from './Minesweeper';
+import Game from './Minesweeper';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
+<<<<<<< HEAD
     <User />
+=======
+    <Game />
+>>>>>>> e307e6874a8501fa1dbe42c8794a921cfde225b3
   </React.StrictMode>,
   document.getElementById('root')
 );

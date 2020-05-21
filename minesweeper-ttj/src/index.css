@@ -1,3 +1,18 @@
+html {
+  animation: anim 6s ease infinite;
+  background: linear-gradient(45deg, #d8b5ff 0% , #1eae98 100%);
+  background-repeat: no-repeat;
+  background-size: 200% 200%;
+  height: 100%;
+  overflow: hidden;
+}
+
+@keyframes anim {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
