@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import User from './User'
 import Game from './Minesweeper';
 import * as serviceWorker from './serviceWorker';
 
