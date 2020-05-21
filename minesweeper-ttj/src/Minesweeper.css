@@ -6,17 +6,16 @@
 
 .board-container {
     position: relative;
-<<<<<<< HEAD
-=======
-    background-color: #e6e9ed;
+    background-color: rgba(230, 233, 237, 0.5);
+    padding: 6px;
     border-radius: 20px;
->>>>>>> 0a725bce19db537e3158cedfda952cb4deb08513
 }
 
 .status {
     width: 272px;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 10px;
 }
 
 .title {
@@ -30,19 +29,10 @@
     width: 50px;
     border-radius: 10px;
     margin: 3px;
-<<<<<<< HEAD
-    background-color: white;
-=======
->>>>>>> 0a725bce19db537e3158cedfda952cb4deb08513
 }
 
 .hidden {
     background-color: #e6e9ed;
-<<<<<<< HEAD
-=======
-    box-shadow:  5px 5px 10px rgba(255, 255, 255, 0.3), 
-                -5px -5px 10px rgba(0, 0, 0, 0.15);
->>>>>>> 0a725bce19db537e3158cedfda952cb4deb08513
 }
 
 .row {
@@ -50,5 +40,13 @@
 }
 
 .bomb {
-    background-color: red;
+    background-color: rgba(234, 32, 39, 0.5);
+}
+
+.dot {
+    height: 25px;
+    width: 25px;
+    background-color: #EA2027;
+    border-radius: 50%;
+    display: flex;
 }

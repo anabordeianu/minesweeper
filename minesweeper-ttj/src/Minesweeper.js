@@ -7,7 +7,8 @@ class Timer extends React.Component {
         this.state = {
             timerOn: false,
             timerStart: 0,
-            timerElapsed: 0
+            timerElapsed: 0,
+            run: this.run()
          };
 
         this.startTimer = this.startTimer.bind(this);
@@ -21,17 +22,21 @@ class Timer extends React.Component {
             timerElapsed: this.state.timerElapsed
         });
 
-        this.timer = setInterval(() => {
+        this.state.timerOn && (this.timer = setInterval(() => {
             this.setState({
                 timerElapsed: Date.now() - this.state.timerStart
             });
-        }, 1000);
+        }, 1000));
     }
 
     stopTimer() {
         this.setState({
             timerOn: false
         })
+    }
+
+    run() {
+        this.props.started && this.startTimer();
     }
 
     render() {
@@ -52,11 +57,12 @@ class Timer extends React.Component {
 class Cell extends React.Component {
     constructor(props) {
         super(props);
+
+        this.handleClick = this.handleClick.bind(this);
+
         this.state = {
             isHidden: true
         };
-
-        this.handleClick = this.handleClick.bind(this);
     }
 
     handleClick(event) {
@@ -65,6 +71,13 @@ class Cell extends React.Component {
         });
 
         this.props.stepCounter();
+    }
+
+    componentDidUpdate() {
+        if(this.props.isBomb){
+            console.log("the bro lost");
+            this.props.stat();
+        }
     }
 
     render() {
@@ -79,9 +92,10 @@ class Cell extends React.Component {
             {
                 
                 !this.state.isHidden && this.props.isBomb &&
-                <div className="cell bomb">
-
+                <div className="cell bomb flex-center">
+                    <span className="dot"></span>
                 </div>
+                
             }
             {
                 !this.state.isHidden && !this.props.isBomb &&
@@ -98,12 +112,13 @@ class Board extends React.Component {
     constructor(props) {
         super(props);
 
+        this.handleFin = this.handleFin.bind(this);
         this.handleStep = this.handleStep.bind(this);
         this.boardDisplay = this.boardDisplay.bind(this);
         
         this.state = {
             stepCount: 0,
-            started: false,
+            fin: 0, /* lost = -1, win = 1 */
             board: this.boardDisplay()
         };
     }
@@ -111,7 +126,12 @@ class Board extends React.Component {
     handleStep() {
         this.setState({
             stepCount: this.state.stepCount + 1,
-            started: true
+        });
+    }
+
+    handleFin() {
+        this.setState({
+            fin: -1
         });
     }
 
@@ -128,7 +148,7 @@ class Board extends React.Component {
                     random_bool = Math.random() >= 0.8;
                     if(random_bool) counter++;
                 } else random_bool = false;
-                cols.push(<Cell key={(key++).toString()} isBomb={random_bool} stepCounter={this.handleStep}/>);
+                cols.push(<Cell key={(key++).toString()} isBomb={random_bool} stepCounter={this.handleStep} stat={this.handleFin}/>);
             }
         rows.push(<div key={(key++).toString()} className="row">{cols}</div>);
         cols = [];
@@ -138,20 +158,20 @@ class Board extends React.Component {
     }
 
     render() {
-        return (
-            <>
-                <div className="title">Minesweeper</div>
-                <div className="status">
-                    <Timer />
-                    <div className="step-count">
-                        {this.state.stepCount}
+            return (
+                <>
+                    <div className="title">Minesweeper</div>
+                    <div className="status">
+                        <Timer />
+                        <div className="step-count">
+                            {this.state.stepCount}
+                        </div>
                     </div>
-                </div>
-                <div className="board-container">
-                    {this.state.board}
-                </div>
-            </>
-        );
+                    <div className="board-container">
+                        {this.state.board}
+                    </div>
+                </>
+            );
     }
 }
 
@@ -159,10 +179,38 @@ class Game extends React.Component {
     render() {
         return (
             <div className="main-container flex-center">
-                <Board rows="10" cols="8" bombNo="10" />
+                <Board rows="10" cols="8" bombNo="15" />
             </div>
         )
     }
 }
+
+var sendScoreToAPI = () => {
+    //get player name from browser prompt
+    var playerName = prompt("Congrats for winning the game! Please enter your name: ", "Alexa");
+    if (playerName != null) {
+      var dataToSave = {
+        playerScore: 10, //replace 10 with your actual variable (probably this.state.gameScore or this.state.time)
+        playerName: playerName,
+        currentTime: new Date()
+      };
+      // Actual API call
+      fetch(
+        "https://api.example.com/minesweeper", // replace with the url to your API
+        {method: 'POST', body: JSON.stringify(dataToSave)}
+        )
+        .then(res => res.json())
+        .then(
+          (result) => {
+            alert('You saved your score');
+          },
+          // Note: it's important to handle errors here
+          (error) => {
+            alert('Bad API call');
+            console.log(error);
+          }
+        )
+    }
+  }
 
 export default Game;
