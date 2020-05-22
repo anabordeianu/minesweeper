@@ -237,7 +237,7 @@ var sendScoreToAPI = (passedName, score) => {
       };
       // Actual API call
       fetch(
-        "https://api.example.com/minesweeper", // replace with the url to your API
+        "https://localhost:44351/API/Players", // replace with the url to your API
         {
           method: 'POST', 
           headers: {

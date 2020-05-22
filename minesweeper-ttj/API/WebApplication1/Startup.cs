@@ -30,6 +30,17 @@ namespace WebApplication1
             services.AddDbContext<PlayerContext>(opt =>
                opt.UseInMemoryDatabase("PlayerList"));
             services.AddControllers();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder
+                            .AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +54,8 @@ namespace WebApplication1
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("AllowAllOrigins");
 
             app.UseAuthorization();
 
