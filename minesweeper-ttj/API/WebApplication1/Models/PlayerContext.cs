@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using API.Models;
 
 namespace API.Models
 {
@@ -10,5 +11,7 @@ namespace API.Models
         }
 
         public DbSet<Player> Players { get; set; }
+
+        public DbSet<API.Models.PlayerDTO> PlayerDTO { get; set; }
     }
 }
