@@ -23,10 +23,14 @@
 }
 
 .status {
-    width: 272px;
+    width: 300px;
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+}
+
+.timer-display img {
+    transform: scale(0.04);
 }
 
 .title {
@@ -116,4 +120,27 @@
 
 .btn-dialog img {
     transform: scale(0.04);
+}
+
+.wiggle {
+
+    animation: wiggle 0.3s;
+    transition: background-color 0.3s ease-in-out;
+
+}
+
+@keyframes wiggle {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); 
+          background-color: rgba(234, 32, 39, 0.5);}
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); 
+        background-color: rgba(230, 233, 237, 0.5);}
 }

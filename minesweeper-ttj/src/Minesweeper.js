@@ -10,6 +10,8 @@ class Timer extends React.Component {
             timerElapsed: 0,
          };
 
+        /*eventHub.on('timerStart', () => {this.startTimer()});*/
+
         this.startTimer = this.startTimer.bind(this);
         this.stopTimer = this.stopTimer.bind(this);
     }
@@ -40,16 +42,19 @@ class Timer extends React.Component {
         const { timerElapsed } = this.state;
         let seconds = ("0" + (Math.floor(timerElapsed / 1000) % 60)).slice(-2);
         let minutes = ("0" + (Math.floor(timerElapsed / 60000) % 60)).slice(-2);
-    
         /* mai trb iconita */
         return (
-                    <div className="timer-display">
-                        {minutes} : {seconds}
+                    <div className="timer-display flex-center">
+                        <div>
+                            {minutes} : {seconds}
+                        </div>
                     </div>
         )
     }
 
 }
+
+let done = false;
 
 class Cell extends React.Component {
     constructor(props) {
@@ -58,51 +63,80 @@ class Cell extends React.Component {
         this.handleClick = this.handleClick.bind(this);
 
         this.state = {
-            isHidden: true
+            isHidden: true,
         };
     }
 
     handleClick(event) {
-        this.setState({
-            isHidden: false
-        });
-
-        this.props.stepCounter();
-        this.props.time();
+        if(!done) {
+            this.setState({
+                isHidden: false
+            });
+    
+            this.props.stepCounter();
+            /*eventHub.trigger('timerStart', 1);*/
+        }
+        else {
+            this.props.handleBombClick();
+        }
     }
 
     componentDidUpdate() {
         if(this.props.isBomb){
             console.log("the bro lost");
-            this.props.stat();
+            this.props.lost();
+
+            done = true;
+            console.log(done);
         }
     }
 
     render() {
-        return (
-            <>
-            {
-                this.state.isHidden &&
-                <div className="cell hidden" onClick={this.handleClick}>
-
-                </div>
-            }
-            {
-                
-                !this.state.isHidden && this.props.isBomb &&
-                <div className="cell bomb flex-center">
-                    <span className="dot"></span>
-                </div>
-                
-            }
-            {
-                !this.state.isHidden && !this.props.isBomb &&
-                <div className="cell">
-                
-                 </div>
-            }
-            </>
-        )
+        if(!done){
+            return (
+                <>
+                {
+                    this.state.isHidden &&
+                    <div className="cell hidden" onClick={this.handleClick}>
+    
+                    </div>
+                }
+                {
+                    
+                    !this.state.isHidden && this.props.isBomb &&
+                    <div className="cell bomb flex-center">
+                        <span className="dot"></span>
+                    </div>
+                    
+                }
+                {
+                    !this.state.isHidden && !this.props.isBomb &&
+                    <div className="cell">
+                    
+                     </div>
+                }
+                </>
+            )
+        } else {
+            return (
+                <>
+                {
+                    
+                    this.props.isBomb &&
+                    <div className="cell bomb flex-center ce">
+                        <span className="dot"></span>
+                    </div>
+                    
+                }
+                {
+                    !this.props.isBomb &&
+                    <div className="cell">
+                    
+                     </div>
+                }
+                </>
+            )
+        }
     }
 }
 
@@ -110,7 +144,7 @@ class Board extends React.Component {
     constructor(props) {
         super(props);
 
-        this.handleFin = this.handleFin.bind(this);
+        this.handleLost = this.handleLost.bind(this);
         this.handleStep = this.handleStep.bind(this);
         this.boardDisplay = this.boardDisplay.bind(this);
         this.handleInput = this.handleInput.bind(this);
@@ -121,7 +155,9 @@ class Board extends React.Component {
             fin: 0, /* lost = -1, win = 1 */
             board: this.boardDisplay(),
             user: "",
-            timeStart: false
+            timeStart: false,
+            lost: false,
+            won: false
         };
     }
 
@@ -131,16 +167,25 @@ class Board extends React.Component {
         });
     }
 
-    handleFin() {
+    handleLost() {
         this.setState({
             fin: -1
         });
+        console.log(this.state.fin);
     }
 
     handleTime() {
         this.setState({
             timeStart: true
         });
+    }
+
+    handleBombClick = () => {
+        var classNames="";
+        if(done)
+            classNames += " wiggle"
+
+        return classNames;
     }
 
     boardDisplay() {
@@ -156,7 +201,7 @@ class Board extends React.Component {
                     random_bool = Math.random() >= 0.8;
                     if(random_bool) counter++;
                 } else random_bool = false;
-                cols.push(<Cell key={(key++).toString()} isBomb={random_bool} stepCounter={this.handleStep} stat={this.handleFin} time={this.handleTime}/>);
+                cols.push(<Cell key={(key++).toString()} isBomb={random_bool} stepCounter={this.handleStep} lost={this.handleLost} time={this.handleTime} handleBombClick={this.handleBombClick}/>);
             }
         rows.push(<div key={(key++).toString()} className="row">{cols}</div>);
         cols = [];
@@ -172,7 +217,7 @@ class Board extends React.Component {
     }
 
     fin() {
-        if(this.state.fin === 1)
+        if(this.state.fin === -1)
             return (
                 <>
                     <div className="dialog">
@@ -181,7 +226,7 @@ class Board extends React.Component {
                     </div>
                 </>
             )
-        else if(this.state.fin === -1)
+        else if(this.state.fin === 1)
             return (
                 <div className="won-dialog flex-center">
                     <div className="dialog">
@@ -190,7 +235,7 @@ class Board extends React.Component {
                         <input type="text" name="userName" placeholder="Winner" value={this.state.user} onChange={this.handleInput}></input>
                     </div>
                     <div className="btn-dialog flex-center" onClick={() => sendScoreToAPI(this.state.user, this.state.stepCount)}>
-                        <img src={Send} />
+                        <img src={Send} alt=""/>
                     </div>
                 </div>
         )
@@ -207,7 +252,7 @@ class Board extends React.Component {
                             {this.state.stepCount}
                         </div>
                     </div>
-                    <div className="board-container">
+                    <div className={'board-container' + this.handleBombClick()}>
                         {this.state.board}
                     </div>
                     {this.fin()}
@@ -237,7 +282,7 @@ var sendScoreToAPI = (passedName, score) => {
       };
       // Actual API call
       fetch(
-        "https://api.example.com/minesweeper", // replace with the url to your API
+        "https://localhost:44351/API/Players", // replace with the url to your API
         {
           method: 'POST', 
           headers: {
@@ -259,5 +304,22 @@ var sendScoreToAPI = (passedName, score) => {
         )
     }
   }
+
+let callbackLists = { };
+let eventHub = {
+    trigger(eventName, data) {
+        let callbackList = callbackLists[eventName];
+        if(!callbackList) {
+            return;
+        }
+        for (let i=0; i<callbackList.length; i++)
+            callbackList[i](data);
+    },
+    on(eventName, callback) {
+        if(!callbackLists[eventName])
+            callbackLists[eventName] = [];
+        callbackLists[eventName].push(callback);
+    }
+}
 
 export default Game;
